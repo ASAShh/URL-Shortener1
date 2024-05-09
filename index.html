@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Url Shortener</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.0/css/boxicons.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+        <lord-icon
+            src="https://cdn.lordicon.com/vlycxjwx.json"
+            trigger="hover"
+            colors="primary:#121331,secondary:#320a5c"
+            style="width:150px;height:150px">
+        </lord-icon>
+        <h1>Shorten a long URL</h1>
+        <input type="text" id="longUrl" placeholder="Enter URL To Shorten">
+        <div class="buttons">
+            <button id="reload-btn">
+                <i class='bx bx-refresh'></i>Refresh
+            </button>
+            <button id="short-btn">
+                <i class='bx bx-link-alt'></i>Shorten The URL
+            </button>
+            <button id="copy-btn">
+                <i class='bx bx-copy-alt'></i>Copy
+            </button>
+        </div>
+        <label for="shortUrl">The Shortened URL</label>
+        <a id="shortUrl" class="shortened-url" target="_blank" rel="noopener noreferrer"></a>
+        <small>Designed By Ashwin Bhatt</small>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
