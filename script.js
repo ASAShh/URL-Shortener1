@@ -1,53 +1,97 @@
+// Get DOM elements
 const shortBtn = document.getElementById('short-btn');
 const reloadBtn = document.getElementById('reload-btn');
 const copyBtn = document.getElementById('copy-btn');
 const shortUrlLink = document.getElementById("shortUrl");
 
-shortBtn.addEventListener('click', () => {
-    const longUrl = document.getElementById('longUrl').value;
-    const shortUrl = generateShortURL(longUrl);
+// Map to store short URLs and their corresponding long URLs
+const shortUrlMap = {};
 
-    shortUrlLink.href = shortUrl;
-    shortUrlLink.innerText = shortUrl;
-});
+// Counter for generating short codes
+let counter = 1;
 
+// Event listener for Shorten button
+shortBtn.addEventListener('click', shortenUrl);
+
+// Event listener for Reload button
 reloadBtn.addEventListener('click', () => location.reload());
 
-copyBtn.addEventListener('click', () => {
-    const shortUrl = shortUrlLink.href;
-    if (shortUrl) {
-        navigator.clipboard.writeText(shortUrl)
-        .then(() => {
-            alert('Short Link Copied to Clipboard!!!!');
-        })
-        .catch(error => {
-            console.error('Error copying to clipboard:', error);
-            alert('Error copying to clipboard. Please try again.');
-        });
-    } else {
-        alert('No short URL available.');
+// Event listener for Copy button
+copyBtn.addEventListener('click', copyShortUrl);
+
+// Event listener for Short URL link
+shortUrlLink.addEventListener('click', redirectToLongUrl);
+
+// Function to shorten URL
+function shortenUrl() {
+    const longUrl = document.getElementById('longUrl').value.trim();
+    if (!isValidUrl(longUrl)) {
+        alert('Please enter a valid URL.');
+        return;
     }
-});
 
-shortUrlLink.addEventListener('click', (event) => {
-    event.preventDefault();
-    const longUrl = shortUrlLink.innerText;
-    window.open(longUrl, '_blank');
-});
+    const shortUrl = generateShortUrl(longUrl);
+    shortUrlMap[shortUrl] = longUrl;
 
-function generateShortURL(longUrl) {
-    const hash = hashCode(longUrl);
-    const shortCode = hash.substring(0, 6);
+    displayShortUrl(shortUrl);
+}
+
+// Function to generate a short URL
+function generateShortUrl(longUrl) {
+    let shortCode;
+    do {
+        shortCode = generateRandomString(6);
+    } while (shortUrlMap.hasOwnProperty(shortCode));
     return window.location.origin + '/' + shortCode;
 }
 
-function hashCode(str) {
-    let hash = 0;
-    if (str.length === 0) return hash;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash |= 0;
+// Function to generate a random string
+function generateRandomString(length) {
+    const possibleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomString = '';
+    for (let i = 0; i < length; i++) {
+        randomString += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
     }
-    return hash.toString();
+    return randomString;
+}
+
+// Function to validate URL format
+function isValidUrl(url) {
+    const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
+    return urlPattern.test(url);
+}
+
+// Function to display short URL
+function displayShortUrl(shortUrl) {
+    shortUrlLink.href = shortUrl;
+    shortUrlLink.innerText = shortUrl;
+}
+
+// Function to copy short URL to clipboard
+function copyShortUrl() {
+    const shortUrl = shortUrlLink.href;
+    if (shortUrl) {
+        navigator.clipboard.writeText(shortUrl)
+            .then(() => {
+                alert('Short Link Copied to Clipboard!!!!');
+            })
+            .catch(error => {
+                console.error('Error copying to clipboard:', error);
+                alert('Error copying to clipboard. Please try again.');
+            });
+    } else {
+        alert('No short URL available.');
+    }
+}
+
+// Function to redirect to long URL when short URL link is clicked
+function redirectToLongUrl(event) {
+    event.preventDefault();
+    const shortUrl = shortUrlLink.innerText;
+    const longUrl = shortUrlMap[shortUrl];
+    if (longUrl) {
+        window.open(longUrl, '_blank');
+    } else {
+        alert('Long URL not found for this short link.');
+    }
 }
